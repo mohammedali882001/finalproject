@@ -1,0 +1,9 @@
+import React from "react";
+import styles from "./Home.module.css";
+export default function Home() {
+  return (
+    <>
+      <h2 className=" h22">Home</h2>
+    </>
+  );
+}
