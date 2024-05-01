@@ -14,21 +14,65 @@ import Cart from "./Components/Cart/Cart";
 import NotFound from "./Components/NotFound/NotFound";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
 function App() {
+  const [userData, setUserData] = useState(null);
+  let SaveUserData = () => {
+    let encodedToken = localStorage.getItem("userToken");
+    let decodedToken = jwtDecode(encodedToken);
+    setUserData(decodedToken);
+  };
   let routers = createBrowserRouter([
     {
       path: "",
-      element: <Layout></Layout>,
+      element: <Layout setUserData={setUserData} userData={userData}></Layout>,
       children: [
-        { index: true, element: <Home></Home> },
+        {
+          index: true,
+          element: (
+            <ProtectedRoute>
+              <Home></Home>
+            </ProtectedRoute>
+          ),
+        },
 
-        { path: "categories", element: <Categories></Categories> },
-        { path: "login", element: <Login></Login> },
-        { path: "products", element: <Products></Products> },
+        {
+          path: "categories",
+          element: (
+            <ProtectedRoute>
+              <Categories></Categories>
+            </ProtectedRoute>
+          ),
+        },
+        { path: "login", element: <Login SaveUserData={SaveUserData}></Login> },
+        {
+          path: "products",
+          element: (
+            <ProtectedRoute>
+              <Products></Products>
+            </ProtectedRoute>
+          ),
+        },
         { path: "register", element: <Register></Register> },
-        { path: "brand", element: <Brand></Brand> },
-        { path: "cart", element: <Cart></Cart> },
+        {
+          path: "brand",
+          element: (
+            <ProtectedRoute>
+              <Brand></Brand>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "cart",
+          element: (
+            <ProtectedRoute>
+              <Cart></Cart>
+            </ProtectedRoute>
+          ),
+        },
         { path: "*", element: <NotFound></NotFound> },
       ],
     },
